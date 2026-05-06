@@ -1,18 +1,41 @@
-# Netlify deployment config for the BNV User Management frontend.
-# Place this file at the repo root so Netlify can build the frontend
-# from the monorepo without any UI configuration.
+# Netlify deployment config for the BNV User Management MERN app.
+# Both the React frontend AND the Express backend (wrapped as a
+# Netlify Function) are deployed from this single config — no
+# separate backend host required.
 
 [build]
-  base    = "frontend"
-  command = "npm run build"
+  command = """
+    npm install --prefix backend && \
+    npm install --prefix netlify/functions && \
+    npm install --prefix frontend && \
+    npm run build --prefix frontend
+  """
   publish = "frontend/dist"
+  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "20"
+  # Frontend talks to the Express function via the same Netlify origin (the
+  # /api/* redirect above proxies to /.netlify/functions/api).
+  VITE_API_URL = "/api"
+
+[functions]
+  node_bundler = "esbuild"
+  # Bundle backend source files alongside the function so esbuild can resolve
+  # `require('../../backend/src/app')` and friends.
+  included_files = ["backend/src/**"]
+
+# /api/* requests are proxied to the serverless function that runs Express.
+# `force = true` ensures this rule wins over the SPA fallback below.
+[[redirects]]
+  from   = "/api/*"
+  to     = "/.netlify/functions/api/:splat"
+  status = 200
+  force  = true
 
 # SPA fallback — every unknown route is served the React shell so
 # react-router-dom can handle it client-side.
 [[redirects]]
   from   = "/*"
-  to    = "/index.html"
+  to     = "/index.html"
   status = 200

@@ -1,0 +1,9 @@
+{
+  "name": "bnv-netlify-functions",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Netlify Functions wrapper for the BNV User Management API",
+  "dependencies": {
+    "serverless-http": "^3.2.0"
+  }
+}
