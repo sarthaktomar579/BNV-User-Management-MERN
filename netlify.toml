@@ -1,0 +1,18 @@
+# Netlify deployment config for the BNV User Management frontend.
+# Place this file at the repo root so Netlify can build the frontend
+# from the monorepo without any UI configuration.
+
+[build]
+  base    = "frontend"
+  command = "npm run build"
+  publish = "frontend/dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# SPA fallback — every unknown route is served the React shell so
+# react-router-dom can handle it client-side.
+[[redirects]]
+  from   = "/*"
+  to    = "/index.html"
+  status = 200

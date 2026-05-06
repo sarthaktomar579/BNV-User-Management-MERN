@@ -10,7 +10,7 @@ A full-stack **User Management** application built for the **Bits and Volts Pvt.
 
 | Layer       | Platform | URL                                                |
 | ----------- | -------- | -------------------------------------------------- |
-| Frontend    | Vercel   | _Add your deployed URL here after deploying_       |
+| Frontend    | Netlify  | _Add your deployed URL here after deploying_       |
 | Backend API | Render   | _Add your deployed URL here after deploying_       |
 | Repository  | GitHub   | https://github.com/sarthaktomar579/BNV-User-Management-MERN |
 
@@ -153,23 +153,36 @@ Base URL: `/api/users`
 
 ## Deployment
 
-### Frontend → Vercel
+### Frontend → Netlify (recommended)
 
-1. Import the repo into Vercel.
-2. **Root directory:** `frontend`
-3. **Build command:** `npm run build`
-4. **Output directory:** `dist`
-5. Set env var `VITE_API_URL` to your deployed backend URL (e.g. `https://bnv-user-management-api.onrender.com/api`).
+A `netlify.toml` is committed at the repo root, so Netlify will pick up the build settings automatically.
+
+1. Sign in to [Netlify](https://app.netlify.com) → **Add new site → Import from Git**.
+2. Pick this repo. Netlify will read `netlify.toml` and use:
+   - **Base:** `frontend`
+   - **Build command:** `npm run build`
+   - **Publish directory:** `frontend/dist`
+3. Add a single environment variable:
+   - `VITE_API_URL` → your deployed backend URL, e.g. `https://bnv-user-management-api.onrender.com/api`
+4. Deploy. Netlify gives you a `*.netlify.app` URL — paste it into the **Live Demo** table above.
+
+> SPA routing is already handled via `frontend/public/_redirects` and the `netlify.toml` redirect rule, so deep links like `/users/:id` work after refresh.
 
 ### Backend → Render
 
-1. Create a new Web Service from this repo.
-2. **Root directory:** `backend`
-3. **Build command:** `npm install`
-4. **Start command:** `npm start`
-5. Add env vars: `MONGO_URI`, `CLIENT_URL`, `PORT` (Render injects `PORT` automatically).
+A `render.yaml` blueprint is committed at the repo root.
 
-> A `render.yaml` and `vercel.json` are included as ready-to-go blueprints.
+1. Sign in to [Render](https://render.com) → **New → Web Service** → connect this repo.
+2. Render auto-detects `render.yaml`. Confirm:
+   - **Root directory:** `backend`
+   - **Build command:** `npm install`
+   - **Start command:** `npm start`
+3. Add env vars (in the Render dashboard):
+   - `MONGO_URI` → your MongoDB Atlas connection string
+   - `CLIENT_URL` → your Netlify URL (e.g. `https://bnv-user-management.netlify.app`)
+4. Deploy. Once the service is live, copy the URL back into the frontend's `VITE_API_URL` and redeploy Netlify.
+
+> A `vercel.json` is also included, so Vercel works as a drop-in alternative to Netlify if preferred.
 
 ---
 
