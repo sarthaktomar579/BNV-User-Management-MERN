@@ -8,11 +8,12 @@ A full-stack **User Management** application built for the **Bits and Volts Pvt.
 
 ## Live Demo
 
-| Layer       | Platform | URL                                                |
-| ----------- | -------- | -------------------------------------------------- |
-| Frontend    | Netlify  | _Add your deployed URL here after deploying_       |
-| Backend API | Render   | _Add your deployed URL here after deploying_       |
-| Repository  | GitHub   | https://github.com/sarthaktomar579/BNV-User-Management-MERN |
+The whole stack — React UI + Express API — is deployed to a single Netlify site.
+
+| Layer        | Platform | URL                                                          |
+| ------------ | -------- | ------------------------------------------------------------ |
+| App (FE+BE)  | Netlify  | _Add your deployed URL here after deploying_                 |
+| Repository   | GitHub   | https://github.com/sarthaktomar579/BNV-User-Management-MERN  |
 
 ---
 
@@ -44,19 +45,20 @@ A full-stack **User Management** application built for the **Bits and Volts Pvt.
 
 ```
 BNV-User-Management-MERN/
-├── backend/
+├── backend/                      # Express + Mongoose source
 │   ├── src/
-│   │   ├── config/db.js
+│   │   ├── config/db.js          # Cached Mongoose connection (serverless-safe)
 │   │   ├── controllers/userController.js
 │   │   ├── middleware/errorHandler.js
 │   │   ├── middleware/validators.js
 │   │   ├── models/User.js
 │   │   ├── routes/userRoutes.js
-│   │   └── app.js
-│   ├── server.js
+│   │   ├── seed.js
+│   │   └── app.js                # The Express app (no .listen)
+│   ├── server.js                 # Long-running entry (local dev / Render fallback)
 │   ├── package.json
 │   └── .env.example
-├── frontend/
+├── frontend/                     # Vite + React + MUI client
 │   ├── src/
 │   │   ├── components/   (Layout, UserTable, UserForm, SearchBar, Pagination)
 │   │   ├── pages/        (UserListPage, UserFormPage, UserViewPage)
@@ -64,9 +66,16 @@ BNV-User-Management-MERN/
 │   │   ├── utils/validators.js
 │   │   ├── App.jsx
 │   │   └── main.jsx
+│   ├── public/_redirects
 │   ├── index.html
 │   ├── vite.config.js
 │   └── package.json
+├── netlify/
+│   └── functions/
+│       ├── api.js                # Wraps Express via serverless-http
+│       └── package.json
+├── netlify.toml                  # Single-platform deployment config
+├── render.yaml                   # Optional alternative for traditional hosting
 ├── README.md
 └── .gitignore
 ```
@@ -153,36 +162,30 @@ Base URL: `/api/users`
 
 ## Deployment
 
-### Frontend → Netlify (recommended)
+The Express API is deployed as a **Netlify Function** (`netlify/functions/api.js`) using `serverless-http`. The React app is built to a static bundle and served from the same Netlify site, with a redirect rule that routes `/api/*` to the function. **One platform, one deploy, no sleep.**
 
-A `netlify.toml` is committed at the repo root, so Netlify will pick up the build settings automatically.
+### Steps
 
-1. Sign in to [Netlify](https://app.netlify.com) → **Add new site → Import from Git**.
-2. Pick this repo. Netlify will read `netlify.toml` and use:
-   - **Base:** `frontend`
-   - **Build command:** `npm run build`
-   - **Publish directory:** `frontend/dist`
-3. Add a single environment variable:
-   - `VITE_API_URL` → your deployed backend URL, e.g. `https://bnv-user-management-api.onrender.com/api`
-4. Deploy. Netlify gives you a `*.netlify.app` URL — paste it into the **Live Demo** table above.
+1. Create a free [MongoDB Atlas](https://www.mongodb.com/atlas) cluster and grab the connection string (`mongodb+srv://...`).
+2. Sign in to [Netlify](https://app.netlify.com) → **Add new site → Import from Git** → pick this repo.
+3. Netlify reads `netlify.toml` and auto-fills everything (build command, publish dir, function dir, redirects, even `VITE_API_URL=/api`). Just add **one** environment variable in the Netlify dashboard:
+   - `MONGO_URI` → your Atlas connection string
+4. Click **Deploy**. You'll get a `*.netlify.app` URL — paste it into the **Live Demo** table above.
 
-> SPA routing is already handled via `frontend/public/_redirects` and the `netlify.toml` redirect rule, so deep links like `/users/:id` work after refresh.
+### How it works
 
-### Backend → Render
+```
+ user → https://your-site.netlify.app/users          → static React app (CDN, always-on)
+ user → https://your-site.netlify.app/api/users      → Netlify Function → Express → MongoDB Atlas
+```
 
-A `render.yaml` blueprint is committed at the repo root.
+- First request after a quiet period: ~1–3 sec cold-start (much faster than Render's 30–50 sec wake from sleep).
+- Warm requests: ~50–150 ms.
+- MongoDB connection is **cached** on the function's module scope, so warm invocations skip the handshake.
 
-1. Sign in to [Render](https://render.com) → **New → Web Service** → connect this repo.
-2. Render auto-detects `render.yaml`. Confirm:
-   - **Root directory:** `backend`
-   - **Build command:** `npm install`
-   - **Start command:** `npm start`
-3. Add env vars (in the Render dashboard):
-   - `MONGO_URI` → your MongoDB Atlas connection string
-   - `CLIENT_URL` → your Netlify URL (e.g. `https://bnv-user-management.netlify.app`)
-4. Deploy. Once the service is live, copy the URL back into the frontend's `VITE_API_URL` and redeploy Netlify.
+### Optional: traditional hosting on Render
 
-> A `vercel.json` is also included, so Vercel works as a drop-in alternative to Netlify if preferred.
+If you'd rather run the backend as a long-running Node process (e.g. for heavy CSV exports that exceed the 10s function timeout), `render.yaml` and `vercel.json` are kept in the repo as alternatives. See `render.yaml` for the Render blueprint.
 
 ---
 
