@@ -26,13 +26,12 @@
   included_files = ["backend/src/**"]
 
 # /api/* requests are proxied to the serverless function that runs Express.
-# We deliberately do NOT use `:splat` here — Netlify's path-rewriting with
-# splat can drop request bodies on POST/PUT/DELETE for some build pipelines.
-# Routing to the bare function URL keeps method + body intact, and the
-# function reads the original path from `event.rawUrl`.
+# Using :splat preserves the original path on the function side so events like
+# /api/users arrive at /.netlify/functions/api/users, with event.rawUrl
+# preserving the original URL for our path-recovery logic in api.js.
 [[redirects]]
   from   = "/api/*"
-  to     = "/.netlify/functions/api"
+  to     = "/.netlify/functions/api/:splat"
   status = 200
   force  = true
 
