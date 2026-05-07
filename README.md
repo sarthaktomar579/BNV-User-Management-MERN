@@ -55,7 +55,7 @@ BNV-User-Management-MERN/
 │   │   ├── routes/userRoutes.js
 │   │   ├── seed.js
 │   │   └── app.js                # The Express app (no .listen)
-│   ├── server.js                 # Long-running entry (local dev / Render fallback)
+│   ├── server.js                 # Long-running entry (used for local dev only)
 │   ├── package.json
 │   └── .env.example
 ├── frontend/                     # Vite + React + MUI client
@@ -75,7 +75,6 @@ BNV-User-Management-MERN/
 │       ├── api.js                # Wraps Express via serverless-http
 │       └── package.json
 ├── netlify.toml                  # Single-platform deployment config
-├── render.yaml                   # Optional alternative for traditional hosting
 ├── README.md
 └── .gitignore
 ```
@@ -179,13 +178,9 @@ The Express API is deployed as a **Netlify Function** (`netlify/functions/api.js
  user → https://your-site.netlify.app/api/users      → Netlify Function → Express → MongoDB Atlas
 ```
 
-- First request after a quiet period: ~1–3 sec cold-start (much faster than Render's 30–50 sec wake from sleep).
+- First request after a quiet period: ~1–3 sec cold-start.
 - Warm requests: ~50–150 ms.
 - MongoDB connection is **cached** on the function's module scope, so warm invocations skip the handshake.
-
-### Optional: traditional hosting on Render
-
-If you'd rather run the backend as a long-running Node process (e.g. for heavy CSV exports that exceed the 10s function timeout), `render.yaml` and `vercel.json` are kept in the repo as alternatives. See `render.yaml` for the Render blueprint.
 
 ---
 
