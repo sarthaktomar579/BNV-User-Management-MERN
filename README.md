@@ -22,19 +22,23 @@ The whole stack — React UI + Express API — is deployed to a single Netlify s
 ### Backend (Express + MongoDB)
 
 - **CRUD API** — Create, Read, Update, Delete user records
+- **Profile fields** — Name, email, phone, gender, location, **profile image URL**, status
 - **Pagination** — `?page=1&limit=10` with total count & page metadata
-- **Search API** — Case-insensitive search across name, email, phone & city
+- **Search API** — Case-insensitive search across name, email, phone & location
 - **CSV Export API** — Streams the current dataset as a downloadable `.csv`
-- **Validation** — Server-side checks via `express-validator`
+- **Validation** — Server-side checks via `express-validator` (incl. URL validation for `profileImage`)
 - **Error Handling** — Centralized middleware with consistent JSON responses
 - **CORS + Helmet + Morgan** — Production-ready middleware stack
 
 ### Frontend (React + Vite + MUI)
 
-- **3 Screens** — Listing (table), Add/Edit form, View details
+- **BNV-branded UI** — Red theme, branded header, "MERN stack developer practical task" sub-bar
+- **3 Screens** — Listing (table), Add/Edit form ("Register Your Details"), View details
 - **Multiple Routing** — `react-router-dom` (`/`, `/users/new`, `/users/:id/edit`, `/users/:id`)
-- **Component Driven** — Reusable `UserTable`, `UserForm`, `SearchBar`, `Pagination`, `Layout` components
-- **Field Validation** — Email, phone, required, length rules with inline error messages
+- **Component Driven** — Reusable `UserTable`, `UserForm`, `SearchBar`, `Pagination`, `Layout`, `UserActionMenu` components
+- **3-dot Action Menu** — View / Edit / Delete actions per row
+- **Profile Avatars** — Renders `profileImage` URL with graceful initials fallback
+- **Field Validation** — Email, phone, URL, required & length rules with inline error messages
 - **Notifications** — `react-toastify` for success / failure feedback
 - **Responsive Design** — Adapts cleanly between mobile and desktop via MUI Grid + breakpoints
 - **No inline styles** — Styling done via MUI `sx` / theme
