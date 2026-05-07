@@ -34,7 +34,11 @@ export const userService = {
   remove: (id) => api.delete(`/users/${id}`).then((r) => r.data),
 
   exportCsvUrl: (search = '') => {
-    const url = new URL(`${baseURL}/users/export`);
+    // `baseURL` may be absolute (http://localhost:5000/api) for local dev, or
+    // relative (/api) in production behind the Netlify redirect. The URL
+    // constructor needs a base for relative paths; using window.location.origin
+    // is a no-op when the input is already absolute.
+    const url = new URL(`${baseURL}/users/export`, window.location.origin);
     if (search) url.searchParams.set('search', search);
     return url.toString();
   },
