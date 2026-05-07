@@ -55,6 +55,12 @@ exports.handler = async (event, context) => {
   // Don't wait for the event loop to drain (mongoose keeps sockets alive)
   context.callbackWaitsForEmptyEventLoop = false;
 
+  // Diagnostic: log what Netlify is actually delivering to the function so
+  // we can debug method/path issues from the Functions log in the dashboard.
+  console.log(
+    `[fn] ${event.httpMethod || '?'} path=${event.path} rawUrl=${event.rawUrl} -> recovered=${recoverOriginalUrl(event)}`
+  );
+
   if (!connectionPromise) {
     connectionPromise = connectDB().catch((err) => {
       connectionPromise = undefined;

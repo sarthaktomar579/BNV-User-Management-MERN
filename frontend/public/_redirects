@@ -1,1 +1,8 @@
-/*    /index.html   200
+# Netlify routes — order matters: most specific first.
+# `200!` is the equivalent of `force = true` and ensures the proxy wins
+# over the SPA fallback. The function reads the original path from
+# event.rawUrl so the bare /.netlify/functions/api target is fine.
+/api/*    /.netlify/functions/api    200!
+
+# SPA fallback for client-side routes handled by react-router-dom.
+/*        /index.html                200
