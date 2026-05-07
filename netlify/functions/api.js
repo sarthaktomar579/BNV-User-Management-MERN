@@ -11,20 +11,41 @@ const serverless = require('serverless-http');
 const app = require('../../backend/src/app');
 const connectDB = require('../../backend/src/config/db');
 
-// Recover the original request URL (e.g. /api/users) from event.rawUrl so
-// Express's mounted routes (/api/users) match. Netlify rewrites the path
-// to /.netlify/functions/api/* before invoking, which would otherwise hide
-// the original path from the Express router.
+// Recover the original request URL (e.g. /api/users) so Express's mounted
+// routes (/api/users) match. Netlify rewrites the path to
+// /.netlify/functions/api before invoking the function, which would
+// otherwise hide the original path from the Express router. We try multiple
+// signals on the event object for resilience across Netlify deploy types.
+function recoverOriginalUrl(event) {
+  if (!event) return null;
+
+  if (event.rawUrl) {
+    try {
+      const u = new URL(event.rawUrl);
+      return u.pathname + (u.search || '');
+    } catch (_) {
+      // fall through
+    }
+  }
+
+  if (event.path) {
+    const stripped = event.path.replace(/^\/?\.netlify\/functions\/api/, '');
+    const path = stripped.startsWith('/') ? stripped : `/${stripped}`;
+    const qs = event.rawQueryString
+      ? `?${event.rawQueryString}`
+      : event.queryStringParameters
+      ? `?${new URLSearchParams(event.queryStringParameters).toString()}`
+      : '';
+    return path + qs;
+  }
+
+  return null;
+}
+
 const wrappedHandler = serverless(app, {
   request: (req, event) => {
-    if (event && event.rawUrl) {
-      try {
-        const u = new URL(event.rawUrl);
-        req.url = u.pathname + u.search;
-      } catch (_) {
-        // fall back to the rewritten path
-      }
-    }
+    const original = recoverOriginalUrl(event);
+    if (original) req.url = original;
   },
 });
 
