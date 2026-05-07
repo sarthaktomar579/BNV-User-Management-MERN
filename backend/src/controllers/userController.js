@@ -10,6 +10,7 @@ function buildSearchFilter(search) {
       { lastName: regex },
       { email: regex },
       { phone: regex },
+      { location: regex },
       { city: regex },
       { country: regex },
     ],
@@ -64,8 +65,12 @@ exports.exportUsersCSV = async (req, res, next) => {
       { label: 'Email', value: 'email' },
       { label: 'Phone', value: 'phone' },
       { label: 'Gender', value: 'gender' },
-      { label: 'City', value: 'city' },
-      { label: 'Country', value: 'country' },
+      {
+        label: 'Location',
+        value: (row) =>
+          row.location || [row.city, row.country].filter(Boolean).join(', '),
+      },
+      { label: 'Profile Image', value: 'profileImage' },
       { label: 'Status', value: 'status' },
       { label: 'Created At', value: (row) => (row.createdAt ? new Date(row.createdAt).toISOString() : '') },
     ];

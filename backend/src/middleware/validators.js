@@ -22,8 +22,16 @@ const userValidationRules = [
     .optional()
     .isIn(['Male', 'Female', 'Other'])
     .withMessage('Gender must be Male, Female or Other'),
-  body('city').optional().trim().isLength({ max: 80 }),
-  body('country').optional().trim().isLength({ max: 80 }),
+  body('location').optional({ checkFalsy: true }).trim().isLength({ max: 160 }),
+  body('profileImage')
+    .optional({ checkFalsy: true })
+    .trim()
+    .isURL({ require_protocol: true })
+    .withMessage('Profile image must be a valid URL (https://...)')
+    .isLength({ max: 500 }),
+  // Kept for backward compatibility with older clients.
+  body('city').optional({ checkFalsy: true }).trim().isLength({ max: 80 }),
+  body('country').optional({ checkFalsy: true }).trim().isLength({ max: 80 }),
   body('status').optional().isIn(['Active', 'Inactive']),
 ];
 

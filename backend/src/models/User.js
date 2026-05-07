@@ -35,6 +35,21 @@ const userSchema = new mongoose.Schema(
       enum: ['Male', 'Female', 'Other'],
       default: 'Other',
     },
+    location: {
+      type: String,
+      trim: true,
+      maxlength: 160,
+      default: '',
+    },
+    profileImage: {
+      type: String,
+      trim: true,
+      maxlength: 500,
+      default: '',
+    },
+    // Legacy fields kept for backward compatibility with existing documents.
+    // The form now collects a single `location` value but older records may
+    // still have `city` / `country` populated.
     city: {
       type: String,
       trim: true,
@@ -54,6 +69,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-userSchema.index({ firstName: 'text', lastName: 'text', email: 'text', city: 'text' });
+userSchema.index({ firstName: 'text', lastName: 'text', email: 'text', location: 'text', city: 'text' });
 
 module.exports = mongoose.model('User', userSchema);
