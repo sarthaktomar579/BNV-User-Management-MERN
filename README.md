@@ -10,10 +10,10 @@ A full-stack **User Management** application built for the **Bits and Volts Pvt.
 
 The whole stack — React UI + Express API — is deployed to a single Netlify site.
 
-| Layer        | Platform | URL                                                          |
-| ------------ | -------- | ------------------------------------------------------------ |
-| App (FE+BE)  | Netlify  | _Add your deployed URL here after deploying_                 |
-| Repository   | GitHub   | https://github.com/sarthaktomar579/BNV-User-Management-MERN  |
+| Layer        | Platform | URL                                                                |
+| ------------ | -------- | ------------------------------------------------------------------ |
+| App (FE+BE)  | Netlify  | https://bnv-assignment-user-management.netlify.app                 |
+| Repository   | GitHub   | https://github.com/sarthaktomar579/BNV-User-Management-MERN        |
 
 ---
 
