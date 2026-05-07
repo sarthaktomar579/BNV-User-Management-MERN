@@ -132,7 +132,11 @@ export default function UserListPage() {
         </Grid>
       </Paper>
 
-      {loading ? <Box>{skeletons}</Box> : <UserTable users={users} onDelete={handleDeleteRequest} />}
+      {loading ? (
+        <Box>{skeletons}</Box>
+      ) : (
+        <UserTable users={users} onDelete={handleDeleteRequest} page={page} limit={limit} />
+      )}
 
       <PaginationBar
         page={page}

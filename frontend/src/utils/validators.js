@@ -3,8 +3,12 @@
 export const RULES = {
   firstName: { min: 2, max: 50 },
   lastName: { min: 1, max: 50 },
+  location: { max: 160 },
+  profileImage: { max: 500 },
   phoneRegex: /^[0-9]{10}$/,
   emailRegex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+  // Accepts http(s) URLs only — must include protocol.
+  urlRegex: /^https?:\/\/[^\s/$.?#].[^\s]*$/i,
 };
 
 export function validateUser(values) {
@@ -41,12 +45,17 @@ export function validateUser(values) {
     errors.gender = 'Invalid gender';
   }
 
-  if (values.city && values.city.length > 80) {
-    errors.city = 'City must be at most 80 characters';
+  if (values.location && values.location.length > RULES.location.max) {
+    errors.location = `Location must be at most ${RULES.location.max} characters`;
   }
 
-  if (values.country && values.country.length > 80) {
-    errors.country = 'Country must be at most 80 characters';
+  if (values.profileImage && values.profileImage.trim()) {
+    const url = values.profileImage.trim();
+    if (url.length > RULES.profileImage.max) {
+      errors.profileImage = `URL must be at most ${RULES.profileImage.max} characters`;
+    } else if (!RULES.urlRegex.test(url)) {
+      errors.profileImage = 'Enter a valid URL starting with http:// or https://';
+    }
   }
 
   return errors;

@@ -17,13 +17,13 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import PublicIcon from '@mui/icons-material/Public';
 import WcIcon from '@mui/icons-material/Wc';
 import EventIcon from '@mui/icons-material/Event';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { userService } from '../services/api.js';
+import { themeTokens } from '../theme.js';
 
 function getInitials(u) {
   if (!u) return '';
@@ -77,7 +77,8 @@ export default function UserViewPage() {
   if (!user) return null;
 
   const fullName = `${user.firstName} ${user.lastName}`.trim();
-  const location = [user.city, user.country].filter(Boolean).join(', ') || 'Not provided';
+  const location =
+    user.location || [user.city, user.country].filter(Boolean).join(', ') || 'Not provided';
 
   return (
     <Box>
@@ -96,7 +97,7 @@ export default function UserViewPage() {
       <Paper
         sx={{
           p: { xs: 3, md: 4 },
-          background: 'linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%)',
+          background: `linear-gradient(135deg, ${themeTokens.primary} 0%, ${themeTokens.primaryDark} 100%)`,
           color: 'white',
           border: 'none',
         }}
@@ -109,12 +110,14 @@ export default function UserViewPage() {
         >
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2.5} alignItems={{ xs: 'flex-start', sm: 'center' }}>
             <Avatar
+              src={user.profileImage || undefined}
+              alt={fullName}
               sx={{
-                width: 80,
-                height: 80,
+                width: 96,
+                height: 96,
                 bgcolor: 'rgba(255,255,255,0.2)',
                 color: 'white',
-                fontSize: 32,
+                fontSize: 36,
                 fontWeight: 700,
                 border: '2px solid rgba(255,255,255,0.4)',
               }}
@@ -133,7 +136,7 @@ export default function UserViewPage() {
                   label={user.status}
                   size="small"
                   sx={{
-                    bgcolor: user.status === 'Active' ? 'success.main' : 'grey.700',
+                    bgcolor: user.status === 'Active' ? '#16a34a' : 'rgba(0,0,0,0.4)',
                     color: 'white',
                     fontWeight: 600,
                   }}
@@ -167,12 +170,10 @@ export default function UserViewPage() {
           <Grid item xs={12} md={6}>
             <InfoRow icon={<EmailIcon />} label="Email" value={user.email} />
             <InfoRow icon={<PhoneIcon />} label="Phone" value={user.phone} />
-            <InfoRow icon={<WcIcon />} label="Gender" value={user.gender} />
           </Grid>
           <Grid item xs={12} md={6}>
-            <InfoRow icon={<LocationOnIcon />} label="City" value={user.city} />
-            <InfoRow icon={<PublicIcon />} label="Country" value={user.country} />
-            <InfoRow icon={<LocationOnIcon />} label="Full Location" value={location} />
+            <InfoRow icon={<WcIcon />} label="Gender" value={user.gender} />
+            <InfoRow icon={<LocationOnIcon />} label="Location" value={location} />
           </Grid>
         </Grid>
 
