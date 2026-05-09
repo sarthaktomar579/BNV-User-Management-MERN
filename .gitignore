@@ -9,10 +9,7 @@ build/
 **/build/
 
 # Env files
-.env
-.env.local
 .env.*.local
-**/.env
 !**/.env.example
 
 # Logs
@@ -25,7 +22,6 @@ logs/
 # OS / Editor
 .DS_Store
 Thumbs.db
-.vscode/
 .idea/
 *.swp
 
@@ -34,3 +30,4 @@ coverage/
 
 # Vercel
 .vercel
+config.bat

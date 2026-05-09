@@ -34,7 +34,7 @@ export default function UserListPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(5);
   const [meta, setMeta] = useState({ total: 0, totalPages: 1 });
   const [confirm, setConfirm] = useState({ open: false, user: null });
 
